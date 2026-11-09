@@ -1,0 +1,27 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import ArtworkImage from './ArtworkImage.astro';
+import { url } from '../utils';
+
+interface Props {
+  work: CollectionEntry<'works'>;
+  headingLevel?: 'h2' | 'h3';
+}
+const { work, headingLevel = 'h3' } = Astro.props;
+const { title, year, medium } = work.data;
+const Heading = headingLevel;
+---
+<article class="card">
+  <a href={url(`/works/${work.id}/`)} class="card__link">
+    <ArtworkImage work={work} />
+    <Heading class="card__title">{title}</Heading>
+  </a>
+  <p class="card__meta">{[medium, year].filter(Boolean).join(', ')}</p>
+</article>
+
+<style>
+  .card__link { display: block; text-decoration: none; color: inherit; }
+  .card__link:hover .card__title { color: var(--color-accent); }
+  .card__title { font-size: 1.15rem; margin: var(--space-2) 0 0; }
+  .card__meta { color: var(--color-muted); font-size: 0.9rem; margin: 0; }
+</style>

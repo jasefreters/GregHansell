@@ -1,0 +1,58 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+
+interface Props {
+  items: CollectionEntry<'exhibitions'>[];
+}
+const { items } = Astro.props;
+const rendered = await Promise.all(items.map(async (item) => ({ item, ...(await render(item)) })));
+---
+<ol class="timeline">
+  {rendered.map(({ item, Content }) => {
+    const { title, kind, venue, year, date, link, needsChecking } = item.data;
+    const when = date
+      ? date.toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
+      : year ?? 'Date to be confirmed';
+    return (
+      <li class="timeline__item">
+        <p class="timeline__when">{when}</p>
+        <div>
+          <p class="timeline__kind">{kind}{needsChecking && <span class="badge">To check</span>}</p>
+          <h3 class="timeline__title">{link ? <a href={link}>{title}</a> : title}</h3>
+          {venue && <p class="timeline__venue">{venue}</p>}
+          <div class="timeline__body"><Content /></div>
+        </div>
+      </li>
+    );
+  })}
+</ol>
+
+<style>
+  .timeline { list-style: none; margin: 0; padding: 0; }
+  .timeline__item {
+    display: grid;
+    gap: var(--space-1) var(--space-4);
+    padding-block: var(--space-4);
+    border-top: 1px solid var(--color-border);
+  }
+  @media (min-width: 40rem) {
+    .timeline__item { grid-template-columns: 9rem 1fr; }
+  }
+  .timeline__when { font-family: var(--font-display); font-size: 1.1rem; margin: 0; }
+  .timeline__kind {
+    font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--color-muted); margin: 0 0 var(--space-1);
+  }
+  .timeline__title { margin: 0; font-size: 1.25rem; }
+  .timeline__venue { color: var(--color-muted); margin: 0; }
+  .timeline__body { margin-top: var(--space-2); max-width: var(--measure); }
+  .timeline__body :global(p:last-child) { margin-bottom: 0; }
+  .badge {
+    margin-left: var(--space-2);
+    padding: 0 var(--space-1);
+    border: 1px dashed var(--color-note-border);
+    background: var(--color-note-bg);
+    border-radius: 3px;
+    letter-spacing: 0.04em;
+  }
+</style>

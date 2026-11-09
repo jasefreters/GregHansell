@@ -1,0 +1,45 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArtworkImage from '../../components/ArtworkImage.astro';
+import Note from '../../components/Note.astro';
+import { getWorks } from '../../collections';
+import { url } from '../../utils';
+
+export async function getStaticPaths() {
+  const works = await getWorks();
+  return works.map((work) => ({ params: { id: work.id }, props: { work } }));
+}
+
+const { work } = Astro.props;
+const { title, year, medium, dimensions, image, needsChecking } = work.data;
+const { Content } = await render(work);
+const details = [medium, dimensions, year].filter(Boolean).join(' · ');
+---
+<BaseLayout
+  title={title}
+  description={`${title}${year ? ` (${year})` : ''}, ${medium.toLowerCase()} by Greg Hansell.`}
+  image={image?.src}
+>
+  <div class="container section work">
+    <div class="work__image">
+      <ArtworkImage work={work} sizes="(min-width: 64rem) 60vw, 100vw" priority />
+    </div>
+    <div class="work__text">
+      <p class="eyebrow"><a href={url('/works/')}>← All works</a></p>
+      <h1>{title}</h1>
+      {details && <p class="work__details">{details}</p>}
+      {needsChecking && <Note kind="check">The details for this work came from public sources and still need checking.</Note>}
+      <div class="prose"><Content /></div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .work { display: grid; gap: var(--space-4); align-items: start; }
+  @media (min-width: 64rem) {
+    .work { grid-template-columns: 3fr 2fr; gap: var(--space-5); }
+  }
+  .work h1 { font-size: clamp(1.8rem, 1.3rem + 2vw, 2.6rem); }
+  .work__details { color: var(--color-muted); }
+</style>

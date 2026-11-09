@@ -1,0 +1,70 @@
+---
+import { NAV, SITE } from '../site.config';
+import { url, isCurrent } from '../utils';
+
+const pathname = Astro.url.pathname;
+---
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="brand" href={url('/')}>
+      <span class="brand__name">{SITE.name}</span>
+      <span class="brand__tagline">{SITE.tagline}</span>
+    </a>
+    <nav aria-label="Main">
+      <ul class="nav">
+        {NAV.map((item) => (
+          <li>
+            <a href={url(item.href)} aria-current={isCurrent(item.href, pathname) ? 'page' : undefined}>
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-bg);
+  }
+  .site-header__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-4);
+    padding-block: var(--space-3);
+  }
+  .brand {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: var(--color-text);
+  }
+  .brand__name {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.1;
+  }
+  .brand__tagline { font-size: 0.85rem; color: var(--color-muted); }
+  .nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-3);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .nav a {
+    display: inline-block;
+    padding-block: var(--space-1);
+    color: var(--color-text);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+  }
+  .nav a:hover { color: var(--color-accent); }
+  .nav a[aria-current='page'] { border-bottom-color: var(--color-accent); }
+</style>

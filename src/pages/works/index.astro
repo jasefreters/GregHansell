@@ -1,0 +1,16 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArtworkGrid from '../../components/ArtworkGrid.astro';
+import Note from '../../components/Note.astro';
+import { getWorks } from '../../collections';
+
+const works = await getWorks();
+---
+<BaseLayout title="Works" description="Selected pastel paintings by Greg Hansell.">
+  <div class="container section">
+    <p class="eyebrow">Works</p>
+    <h1>Selected works</h1>
+    <Note>Photos of the works still to be added. Each work is a file in <code>src/content/works/</code>.</Note>
+    <ArtworkGrid works={works} headingLevel="h2" />
+  </div>
+</BaseLayout>

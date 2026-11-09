@@ -1,0 +1,55 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Note from '../components/Note.astro';
+import { url } from '../utils';
+---
+<BaseLayout
+  title="About"
+  description="About Greg Hansell, an Australian artist working in pastel from his studio in the Hawkesbury region of New South Wales."
+>
+  <div class="container section">
+    <article class="prose">
+      <p class="eyebrow">About</p>
+      <h1>Greg Hansell</h1>
+
+      <Note kind="check">
+        This biography was drafted from public sources (gallery, museum and council websites).
+        Check every detail against Greg's book before relying on it.
+      </Note>
+
+      <Note>Add a portrait photo of Greg here.</Note>
+
+      <p class="lede">
+        Greg Hansell is an Australian artist who works in pastel.
+      </p>
+      <p>
+        Born in Goulburn, New South Wales, in 1949, Greg studied art at St George Technical College
+        in the late 1970s and has painted full time since 1980. He lives and works near Windsor in
+        the Hawkesbury region of NSW, where his house, studio and garden often find their way into
+        his pictures.
+      </p>
+
+      <h2>The work</h2>
+      <p>
+        Much of Greg's work looks closely at weathered, man-made surfaces: corrugated iron, timber,
+        old farm implements and machinery, and the way Australian light falls across them. He is
+        known for his earth pastels, which he makes by hand from rocks and clays.
+      </p>
+      <Note>Add an artist statement in Greg's own words.</Note>
+
+      <h2>Recognition</h2>
+      <ul>
+        <li>Hung in the Wynne Prize at the Art Gallery of New South Wales many times.</li>
+        <li>Twice winner of the Mosman Art Prize.</li>
+        <li>Exhibitions with the Historic Houses Trust of NSW, now Museums of History NSW.</li>
+      </ul>
+      <p><a href={url('/exhibitions/')}>Exhibitions and prizes →</a></p>
+
+      <h2>Collections</h2>
+      <p>
+        Greg's work is held in public and corporate collections, including the Historic Houses
+        Trust of NSW, Hawkesbury City Council, Camden Council, the Commonwealth Bank and ANZ.
+      </p>
+    </article>
+  </div>
+</BaseLayout>

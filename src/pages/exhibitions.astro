@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ExhibitionList from '../components/ExhibitionList.astro';
+import Note from '../components/Note.astro';
+import { getExhibitions } from '../collections';
+
+const items = await getExhibitions();
+---
+<BaseLayout title="Exhibitions" description="Exhibitions, prizes and events for Australian pastel artist Greg Hansell.">
+  <div class="container section">
+    <p class="eyebrow">Exhibitions</p>
+    <h1>Exhibitions &amp; prizes</h1>
+    <Note kind="check">
+      A partial list drawn from public sources. Entries marked “To check” need confirming, and the
+      full list can be added from the book. Each entry is a file in <code>src/content/exhibitions/</code>.
+    </Note>
+    <ExhibitionList items={items} />
+  </div>
+</BaseLayout>

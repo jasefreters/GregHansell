@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Note from '../components/Note.astro';
+import SocialLinks from '../components/SocialLinks.astro';
+import { SITE } from '../site.config';
+
+const hasSocials = SITE.socials.some((s) => s.url);
+---
+<BaseLayout title="Contact" description="Get in touch with Greg Hansell about his work, commissions and exhibitions.">
+  <div class="container section">
+    <div class="prose">
+      <p class="eyebrow">Contact</p>
+      <h1>Get in touch</h1>
+      <p class="lede">For enquiries about Greg's work, commissions or exhibitions.</p>
+
+      {SITE.email ? (
+        <p class="email"><a class="button" href={`mailto:${SITE.email}`}>Email {SITE.email}</a></p>
+      ) : (
+        <Note>Add Greg's email address in <code>src/site.config.ts</code> and an email button appears here.</Note>
+      )}
+
+      <h2>Follow</h2>
+      {hasSocials ? <SocialLinks /> : (
+        <Note>Add Instagram or Facebook links in <code>src/site.config.ts</code>.</Note>
+      )}
+
+      <h2>Galleries</h2>
+      <Note>List any galleries that represent Greg or sell his work.</Note>
+    </div>
+  </div>
+</BaseLayout>

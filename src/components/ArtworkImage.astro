@@ -1,0 +1,60 @@
+---
+/**
+ * Shows an artwork photo if the work has one, otherwise a neutral
+ * "image to come" panel so the layout still looks finished.
+ */
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  work: CollectionEntry<'works'>;
+  /** Width hint for responsive images, e.g. '(min-width: 48rem) 33vw, 100vw' */
+  sizes?: string;
+  priority?: boolean;
+}
+const { work, sizes = '(min-width: 64rem) 33vw, (min-width: 40rem) 50vw, 100vw', priority = false } = Astro.props;
+const { image, imageAlt, title } = work.data;
+---
+{image ? (
+  <Image
+    src={image}
+    alt={imageAlt ?? `${title}, by Greg Hansell`}
+    widths={[400, 800, 1200, 1600]}
+    sizes={sizes}
+    loading={priority ? 'eager' : 'lazy'}
+    class="artwork-image"
+  />
+) : (
+  <div class="artwork-image artwork-image--empty" role="img" aria-label={`Image of ${title} to come`}>
+    <span>Image to come</span>
+  </div>
+)}
+
+<style>
+  .artwork-image {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius);
+    background: var(--color-surface);
+  }
+  /* Placeholder panel: soft corrugated-iron stripes in the theme colours */
+  .artwork-image--empty {
+    display: grid;
+    place-items: center;
+    background:
+      linear-gradient(160deg, color-mix(in srgb, var(--color-ochre) 35%, transparent), transparent 60%),
+      repeating-linear-gradient(90deg,
+        color-mix(in srgb, var(--color-iron) 28%, var(--color-surface)) 0 7px,
+        color-mix(in srgb, var(--color-iron) 12%, var(--color-surface)) 7px 14px);
+    color: var(--color-muted);
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .artwork-image--empty span {
+    padding: var(--space-1) var(--space-2);
+    background: color-mix(in srgb, var(--color-surface) 85%, transparent);
+    border-radius: var(--radius);
+  }
+</style>
