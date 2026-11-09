@@ -1,45 +1,93 @@
 ---
 import { render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import ArtworkImage from '../../components/ArtworkImage.astro';
-import Note from '../../components/Note.astro';
+import Artwork from '../../components/Artwork.astro';
 import { getWorks } from '../../collections';
+import { SITE } from '../../site.config';
 import { url } from '../../utils';
 
 export async function getStaticPaths() {
   const works = await getWorks();
-  return works.map((work) => ({ params: { id: work.id }, props: { work } }));
+  return works.map((work, i) => ({
+    params: { id: work.id },
+    props: { work, prev: works[i - 1], next: works[i + 1] },
+  }));
 }
 
-const { work } = Astro.props;
-const { title, year, medium, dimensions, image, needsChecking } = work.data;
+const { work, prev, next } = Astro.props;
+const { title, year, medium, dimensions, image, imageAlt, credit, creditUrl } = work.data;
 const { Content } = await render(work);
-const details = [medium, dimensions, year].filter(Boolean).join(' · ');
+const facts = [
+  ['Medium', medium],
+  ['Size', dimensions],
+  ['Year', year],
+].filter(([, v]) => v);
 ---
 <BaseLayout
   title={title}
-  description={`${title}${year ? ` (${year})` : ''}, ${medium.toLowerCase()} by Greg Hansell.`}
+  description={`${title}${year ? ` (${year})` : ''}${medium ? `, ${medium.toLowerCase()}` : ''}, by Greg Hansell.`}
   image={image?.src}
 >
-  <div class="container section work">
-    <div class="work__image">
-      <ArtworkImage work={work} sizes="(min-width: 64rem) 60vw, 100vw" priority />
-    </div>
+  <article class="container section work" class:list={{ 'work--text': !image }}>
+    {image && (
+      <div class="work__image">
+        <Artwork image={image} alt={imageAlt ?? title} sizes="(min-width: 64rem) 62vw, 100vw" priority />
+      </div>
+    )}
     <div class="work__text">
-      <p class="eyebrow"><a href={url('/works/')}>← All works</a></p>
       <h1>{title}</h1>
-      {details && <p class="work__details">{details}</p>}
-      {needsChecking && <Note kind="check">The details for this work came from public sources and still need checking.</Note>}
+      {facts.length > 0 && (
+        <dl class="facts">
+          {facts.map(([k, v]) => (<><dt>{k}</dt><dd>{v}</dd></>))}
+        </dl>
+      )}
       <div class="prose"><Content /></div>
+      {credit && (
+        <p class="meta credit">
+          Photograph courtesy of {creditUrl ? <a href={creditUrl}>{credit}</a> : credit}.
+        </p>
+      )}
+      {SITE.gallery.url && image && (
+        <p class="meta">For available works, contact <a href={SITE.gallery.url}>{SITE.gallery.name}</a>.</p>
+      )}
+      <nav class="pager" aria-label="More works">
+        {prev && <a href={url(`/works/${prev.id}/`)}><span class="meta">Previous</span><span>{prev.data.title}</span></a>}
+        {next && <a href={url(`/works/${next.id}/`)}><span class="meta">Next</span><span>{next.data.title}</span></a>}
+        <a href={url('/works/')}>All works</a>
+      </nav>
     </div>
-  </div>
+  </article>
 </BaseLayout>
 
 <style>
-  .work { display: grid; gap: var(--space-4); align-items: start; }
+  .work { display: grid; gap: var(--space-5); align-items: start; }
   @media (min-width: 64rem) {
-    .work { grid-template-columns: 3fr 2fr; gap: var(--space-5); }
+    .work { grid-template-columns: 2fr 1fr; gap: var(--space-6); }
+    .work--text { grid-template-columns: 1fr; }
   }
-  .work h1 { font-size: clamp(1.8rem, 1.3rem + 2vw, 2.6rem); }
-  .work__details { color: var(--color-muted); }
+  .work h1 { font-size: clamp(2rem, 1.5rem + 2vw, 3rem); }
+  .facts {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: var(--space-1) var(--space-4);
+    margin: 0 0 var(--space-4);
+    padding-block: var(--space-3);
+    border-block: 1px solid var(--color-border);
+    font-size: 1.05rem;
+  }
+  .facts dt { color: var(--color-muted); }
+  .facts dd { margin: 0; font-variant-numeric: lining-nums; }
+  .credit { margin-top: var(--space-4); }
+  .pager {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    margin-top: var(--space-5);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-border);
+  }
+  .pager a { display: flex; gap: var(--space-3); padding-block: var(--space-2); text-decoration: none; }
+  .pager a span:last-child { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.18em; }
+  .pager a:hover span:last-child { text-decoration-thickness: 2px; }
+  .pager .meta { flex: 0 0 5rem; }
 </style>

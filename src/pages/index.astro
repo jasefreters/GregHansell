@@ -1,26 +1,45 @@
 ---
+import { getEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Artwork from '../components/Artwork.astro';
 import ArtworkGrid from '../components/ArtworkGrid.astro';
 import { getWorks } from '../collections';
 import { SITE } from '../site.config';
 import { url } from '../utils';
+import bookCover from '../assets/book-cover.jpg';
 
-const featured = (await getWorks()).filter((w) => w.data.featured).slice(0, 6);
+// The painting shown large at the top of the home page.
+const HERO_WORK = 'from-streeton-lookout';
+
+const hero = await getEntry('works', HERO_WORK);
+const featured = (await getWorks()).filter((w) => w.data.featured && w.data.image).slice(0, 6);
 ---
 <BaseLayout>
-  <section class="hero">
-    <div class="container hero__inner">
-      <p class="eyebrow">Australian artist · Hawkesbury, NSW</p>
+  <section class="hero container">
+    <div class="hero__text">
       <h1>{SITE.name}</h1>
       <p class="lede">
-        Pastel paintings of weathered iron, timber and old machinery, and the Australian light
-        that falls across them.
+        Paintings of the Hawkesbury and beyond: weathered iron and timber, farmland and bush,
+        made in handmade earth pastels and oil.
       </p>
-      <p class="hero__actions">
-        <a class="button" href={url('/works/')}>See the work</a>
-        <a class="button button--ghost" href={url('/about/')}>About Greg</a>
+      <p class="hero__career">
+        An Archibald Prize finalist, hung in the Wynne Prize at least 19 times and twice winner
+        of the Mosman Art Prize, Greg is Art School Director of the Royal Art Society of
+        New South Wales.
       </p>
+      <p><a class="more-link" href={url('/works/')}>View the works</a></p>
     </div>
+    {hero?.data.image && (
+      <figure class="hero__art">
+        <a href={url(`/works/${hero.id}/`)}>
+          <Artwork image={hero.data.image} alt={hero.data.imageAlt ?? hero.data.title}
+            sizes="(min-width: 64rem) 60vw, 100vw" priority />
+        </a>
+        <figcaption class="meta">
+          <cite>{hero.data.title}</cite>{[hero.data.medium, hero.data.dimensions].filter(Boolean).map((d) => `, ${d.toLowerCase()}`).join('')}
+        </figcaption>
+      </figure>
+    )}
   </section>
 
   {featured.length > 0 && (
@@ -28,18 +47,24 @@ const featured = (await getWorks()).filter((w) => w.data.featured).slice(0, 6);
       <div class="container">
         <h2>Selected works</h2>
         <ArtworkGrid works={featured} />
-        <p class="more"><a href={url('/works/')}>All works →</a></p>
+        <p class="all"><a class="more-link" href={url('/works/')}>All works</a></p>
       </div>
     </section>
   )}
 
-  <section class="section book-teaser">
-    <div class="container book-teaser__inner">
-      <div>
-        <p class="eyebrow">The book</p>
-        <h2>Greg Hansell: Purity of Australian Light</h2>
-        <p>A monograph on Greg's pastels by Lou Klepac, published by The Beagle Press in 2024.</p>
-        <a href={url('/book/')}>About the book →</a>
+  <section class="book">
+    <div class="container book__inner">
+      <a href={url('/book/')} class="book__cover" tabindex="-1" aria-hidden="true">
+        <Artwork image={bookCover} alt="" decorative sizes="(min-width: 48rem) 18rem, 60vw" />
+      </a>
+      <div class="book__text">
+        <h2><a href={url('/book/')}>Greg Hansell: Purity of Australian Light</a></h2>
+        <p class="meta">Lou Klepac · The Beagle Press · 2024</p>
+        <p>
+          A 192-page monograph tracing Greg's work from 1982 to the present, with an introduction
+          by Lou Klepac, who selected the works, an essay by Carol Roberts, and recollections and
+          notes by the artist.
+        </p>
       </div>
     </div>
   </section>
@@ -47,17 +72,36 @@ const featured = (await getWorks()).filter((w) => w.data.featured).slice(0, 6);
 
 <style>
   .hero {
-    padding-block: var(--space-6);
-    background:
-      linear-gradient(180deg, transparent, var(--color-bg)),
-      repeating-linear-gradient(90deg,
-        color-mix(in srgb, var(--color-iron) 10%, var(--color-bg)) 0 9px,
-        var(--color-bg) 9px 18px);
-    border-bottom: 1px solid var(--color-border);
+    display: grid;
+    gap: var(--space-5);
+    align-items: end;
+    padding-block: var(--space-5) var(--space-6);
   }
-  .hero h1 { font-size: clamp(2.6rem, 1.6rem + 5vw, 5rem); margin-bottom: var(--space-3); }
-  .hero__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-4); }
-  .more { margin-top: var(--space-4); }
-  .book-teaser { background: var(--color-surface); border-block: 1px solid var(--color-border); }
-  .book-teaser__inner > div { max-width: var(--measure); }
+  @media (min-width: 64rem) {
+    .hero { grid-template-columns: 5fr 8fr; gap: var(--space-6); padding-block: var(--space-6); }
+  }
+  .hero h1 { font-size: clamp(3rem, 2rem + 4.5vw, 5.5rem); letter-spacing: -0.03em; line-height: 0.95; margin-bottom: var(--space-4); }
+  .hero__career { color: var(--color-muted); font-size: 1.05rem; max-width: 30rem; }
+  .hero__art { margin: 0; }
+  /* On narrower screens the painting comes first, then the name. */
+  @media (max-width: 63.99rem) {
+    .hero { padding-top: var(--space-4); }
+    .hero__art { order: -1; }
+  }
+  .hero__art figcaption { margin-top: var(--space-3); }
+  .all { margin: var(--space-5) 0 0; }
+
+  .book {
+    background: var(--color-surface);
+    border-block: 1px solid var(--color-border);
+    padding-block: var(--space-6);
+  }
+  .book__inner { display: grid; gap: var(--space-5); align-items: center; }
+  @media (min-width: 48rem) {
+    .book__inner { grid-template-columns: 16rem 1fr; gap: var(--space-6); }
+  }
+  .book__cover { display: block; max-width: 16rem; }
+  .book__text { max-width: var(--measure); }
+  .book__text h2 a { color: inherit; text-decoration: none; }
+  .book__text h2 a:hover { color: var(--color-accent); }
 </style>

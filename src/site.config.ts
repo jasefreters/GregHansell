@@ -1,24 +1,25 @@
 /**
  * Site-wide settings. Edit this file to change the site name, tagline,
- * contact email and social links shown in the header and footer.
+ * contact email, gallery and social links.
  */
 export const SITE = {
   name: 'Greg Hansell',
-  tagline: 'Pastel paintings of Australian light',
+  tagline: 'Australian painter · Hawkesbury, NSW',
   description:
-    'Greg Hansell is an Australian artist working in pastel, based in the Hawkesbury region of New South Wales.',
+    'Greg Hansell is an Australian painter working in handmade earth pastels and oil, based at Windsor in the Hawkesbury region of New South Wales.',
   locale: 'en_AU',
 
-  /**
-   * PLACEHOLDER: add Greg's public contact email, e.g. 'studio@example.com'.
-   * Leave as an empty string ('') to hide the email link everywhere.
-   */
+  /** Greg's public contact email, e.g. 'studio@example.com'. Leave '' to hide it. */
   email: '',
 
-  /**
-   * PLACEHOLDER: add social links. Delete any you don't need.
-   * Leave `url` empty ('') to hide that link.
-   */
+  /** Gallery that currently shows and sells Greg's work. Leave url '' to hide it. */
+  gallery: {
+    name: 'Purple Noon Gallery',
+    place: 'Freemans Reach, NSW',
+    url: 'https://purplenoongallery.com.au/artists/greg-hansell/',
+  },
+
+  /** Social links. Leave `url` as '' to hide a link. */
   socials: [
     { label: 'Instagram', url: '' },
     { label: 'Facebook', url: '' },
@@ -27,10 +28,9 @@ export const SITE = {
 
 /** Main navigation, in the order it appears in the header. */
 export const NAV = [
-  { label: 'Home', href: '/' },
-  { label: 'About', href: '/about/' },
   { label: 'Works', href: '/works/' },
   { label: 'Exhibitions', href: '/exhibitions/' },
   { label: 'Book', href: '/book/' },
+  { label: 'About', href: '/about/' },
   { label: 'Contact', href: '/contact/' },
 ];

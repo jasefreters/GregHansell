@@ -6,11 +6,13 @@ year: 2024
 medium: Earth pastel on paper
 dimensions: 56 x 76 cm
 # Upload the photo into this same folder, then point to it:
-# image: ./title-of-the-work.jpg
+image: ./title-of-the-work.jpg
 imageAlt: Describe what the picture shows, for people using screen readers
+# Optional: who supplied the photo, and a link
+credit: Purple Noon Gallery
+creditUrl: https://purplenoongallery.com.au/artists/greg-hansell/
 featured: false      # true = also show on the home page
 order: 100           # lower numbers appear first on the Works page
-needsChecking: false # true = shows a "To check" note on the page
 ---
 
-A sentence or two about the work: the place, the light, the story behind it.
+Optional: a sentence or two about the work.

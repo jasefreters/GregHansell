@@ -6,10 +6,14 @@ export async function getWorks() {
   return works.sort((a, b) => a.data.order - b.data.order || a.data.title.localeCompare(b.data.title));
 }
 
-/** Exhibitions/prizes/events, newest first; undated items go last. */
+type Exhibition = Awaited<ReturnType<typeof getCollection<'exhibitions'>>>[number];
+
+/** Sort key: exact date, else 1 January of the year; undated items last. */
+const when = (e: Exhibition) =>
+  e.data.date?.getTime() ?? (e.data.year ? Date.UTC(e.data.year, 0, 1) : -Infinity);
+
+/** Exhibitions, prizes, awards and events, newest first. */
 export async function getExhibitions() {
   const items = await getCollection('exhibitions');
-  const key = (e: (typeof items)[number]) =>
-    e.data.date?.getTime() ?? (e.data.year ? Date.UTC(e.data.year, 0, 1) : -Infinity);
-  return items.sort((a, b) => key(b) - key(a) || a.data.title.localeCompare(b.data.title));
+  return items.sort((a, b) => when(b) - when(a) || a.data.title.localeCompare(b.data.title));
 }

@@ -1,55 +1,95 @@
 ---
+import { getEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Note from '../components/Note.astro';
+import Artwork from '../components/Artwork.astro';
 import { url } from '../utils';
+
+const pictured = await getEntry('works', 'college-farm-1-richmond-lowlands');
 ---
 <BaseLayout
   title="About"
-  description="About Greg Hansell, an Australian artist working in pastel from his studio in the Hawkesbury region of New South Wales."
+  description="About Greg Hansell, an Australian painter in handmade earth pastels and oil, based at Windsor in the Hawkesbury region of New South Wales."
 >
-  <div class="container section">
+  <div class="container section about">
     <article class="prose">
-      <p class="eyebrow">About</p>
-      <h1>Greg Hansell</h1>
-
-      <Note kind="check">
-        This biography was drafted from public sources (gallery, museum and council websites).
-        Check every detail against Greg's book before relying on it.
-      </Note>
-
-      <Note>Add a portrait photo of Greg here.</Note>
-
+      <h1>About Greg Hansell</h1>
       <p class="lede">
-        Greg Hansell is an Australian artist who works in pastel.
+        Greg Hansell is an Australian painter in the traditionalist, realist school, known for
+        earth pastels he makes himself from crushed rocks and clays.
       </p>
       <p>
-        Born in Goulburn, New South Wales, in 1949, Greg studied art at St George Technical College
-        in the late 1970s and has painted full time since 1980. He lives and works near Windsor in
-        the Hawkesbury region of NSW, where his house, studio and garden often find their way into
-        his pictures.
+        Born in Goulburn, New South Wales, in 1949, Greg studied art at St George Technical
+        College in the late 1970s, has painted full time since 1980, and made study tours of
+        Europe in 1982 and 1985. He credits the Renaissance masters as the inspiration for most
+        of his work.
+      </p>
+      <p>
+        He lives on the historic Peninsula at Windsor, in a house with a studio overlooking the
+        Hawkesbury River and a large garden that often finds its way into his work. He has
+        lived in the Hawkesbury for more than 30 years, drawn in part by its association with
+        Arthur Streeton and Charles Conder, who painted there in the heyday of Australian
+        landscape painting.
       </p>
 
       <h2>The work</h2>
       <p>
-        Much of Greg's work looks closely at weathered, man-made surfaces: corrugated iron, timber,
-        old farm implements and machinery, and the way Australian light falls across them. He is
-        known for his earth pastels, which he makes by hand from rocks and clays.
+        Greg crushes rocks and clays into pigment and, with no added binder, makes earth pastels
+        of the highest colour permanence. He also works with Schmincke pastels and paints in oil.
       </p>
-      <Note>Add an artist statement in Greg's own words.</Note>
+      <p>
+        His subjects are close views of the Australian landscape and its history: the shadows and
+        textures of weathered surfaces, historic houses and the Victorian clutter of their
+        interiors, farm sheds and country roads. He is well known for his corrugated iron series
+        and for artworks with witty, often political titles.
+      </p>
+
+      <h2>Teaching</h2>
+      <p>
+        Greg has taught at the Royal Art Society of New South Wales since 1997 and is its Art
+        School Director, as well as a Fellow and Council member. From 2011 he was artist in
+        residence at the Australiana Pioneer Village in Wilberforce.
+      </p>
 
       <h2>Recognition</h2>
       <ul>
-        <li>Hung in the Wynne Prize at the Art Gallery of New South Wales many times.</li>
+        <li>Finalist in the Archibald Prize, and hung in the Wynne Prize at least 19 times, at the Art Gallery of New South Wales.</li>
+        <li>Finalist in the Dobell Drawing Prize, 2005.</li>
         <li>Twice winner of the Mosman Art Prize.</li>
-        <li>Exhibitions with the Historic Houses Trust of NSW, now Museums of History NSW.</li>
+        <li>Centenary of Federation Medal, 2001, for services to community arts and Windsor Library.</li>
+        <li>Three exhibitions commissioned by Historic Houses Trust Members at The Mint, Sydney, in 2006, 2008 and 2012.</li>
       </ul>
-      <p><a href={url('/exhibitions/')}>Exhibitions and prizes →</a></p>
+      <p><a class="more-link" href={url('/exhibitions/')}>Exhibitions and prizes</a></p>
 
       <h2>Collections</h2>
       <p>
-        Greg's work is held in public and corporate collections, including the Historic Houses
+        Greg's work is held in public and corporate collections including the Historic Houses
         Trust of NSW, Hawkesbury City Council, Camden Council, the Commonwealth Bank and ANZ.
       </p>
+
+      <h2>The book</h2>
+      <p>
+        <a href={url('/book/')}><cite>Greg Hansell: Purity of Australian Light</cite></a>, by Lou
+        Klepac (The Beagle Press, 2024), covers his work from 1982 to the present.
+      </p>
     </article>
+
+    {pictured?.data.image && (
+      <figure class="about__art">
+        <Artwork image={pictured.data.image} alt={pictured.data.imageAlt ?? pictured.data.title}
+          sizes="(min-width: 64rem) 30vw, 100vw" />
+        <figcaption class="meta"><a href={url(`/works/${pictured.id}/`)}><cite>{pictured.data.title}</cite></a>, {pictured.data.medium?.toLowerCase()}</figcaption>
+      </figure>
+    )}
   </div>
 </BaseLayout>
+
+<style>
+  .about { display: grid; gap: var(--space-6); align-items: start; }
+  @media (min-width: 64rem) {
+    .about { grid-template-columns: minmax(0, 38rem) minmax(0, 1fr); }
+    .about__art { position: sticky; top: var(--space-5); }
+  }
+  .about__art { margin: 0; }
+  .about__art figcaption { margin-top: var(--space-3); }
+  .prose h2 { font-size: 1.75rem; }
+</style>

@@ -1,9 +1,4 @@
 ---
 title: Tomago
-medium: Pastel
-featured: true
-order: 30
-needsChecking: true
+order: 52
 ---
-
-Year, medium and dimensions to be added.

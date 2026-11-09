@@ -1,5 +1,5 @@
 ---
-title: Wynne Prize finalist
+title: Wynne Prize, finalist
 kind: Prize
 venue: Art Gallery of New South Wales
 year: 1984

@@ -1,6 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import ArtworkImage from './ArtworkImage.astro';
+import Artwork from './Artwork.astro';
 import { url } from '../utils';
 
 interface Props {
@@ -8,20 +8,29 @@ interface Props {
   headingLevel?: 'h2' | 'h3';
 }
 const { work, headingLevel = 'h3' } = Astro.props;
-const { title, year, medium } = work.data;
+const { title, year, medium, image, imageAlt } = work.data;
 const Heading = headingLevel;
+const meta = [medium, year].filter(Boolean).join(', ');
 ---
 <article class="card">
   <a href={url(`/works/${work.id}/`)} class="card__link">
-    <ArtworkImage work={work} />
+    {image && (
+      <div class="card__frame">
+        <Artwork image={image} alt={imageAlt ?? title} decorative
+          sizes="(min-width: 64rem) 30vw, (min-width: 40rem) 45vw, 100vw" />
+      </div>
+    )}
     <Heading class="card__title">{title}</Heading>
   </a>
-  <p class="card__meta">{[medium, year].filter(Boolean).join(', ')}</p>
+  {meta && <p class="card__meta meta">{meta}</p>}
 </article>
 
 <style>
-  .card__link { display: block; text-decoration: none; color: inherit; }
+  .card { display: flex; flex-direction: column; height: 100%; }
+  .card__link { display: flex; flex-direction: column; flex: 1; text-decoration: none; color: inherit; }
+  /* Pictures sit on a shared baseline, like works hung on a line */
+  .card__frame { flex: 1; display: flex; align-items: flex-end; }
   .card__link:hover .card__title { color: var(--color-accent); }
-  .card__title { font-size: 1.15rem; margin: var(--space-2) 0 0; }
-  .card__meta { color: var(--color-muted); font-size: 0.9rem; margin: 0; }
+  .card__title { font-size: 1.2rem; margin: var(--space-3) 0 0; }
+  .card__meta { margin: var(--space-1) 0 0; font-size: 0.95rem; }
 </style>

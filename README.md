@@ -37,11 +37,11 @@ settings block at the top of a Markdown file (a missing `:` or quote). Fix it th
 
 | What | File |
 | --- | --- |
-| Site name, tagline, **email**, **Instagram/Facebook links** | `src/site.config.ts` |
+| Site name, tagline, **email**, **gallery**, **Instagram/Facebook links** | `src/site.config.ts` |
 | Menu (order and names of pages) | `NAV` in `src/site.config.ts` |
-| Home page | `src/pages/index.astro` |
+| Home page (and which painting is shown large: `HERO_WORK`) | `src/pages/index.astro` |
 | About / biography | `src/pages/about.astro` |
-| Book page | `src/pages/book.astro` |
+| Book page (cover image: `src/assets/book-cover.jpg`) | `src/pages/book.astro` |
 | Contact page | `src/pages/contact.astro` |
 | **Artworks** (one file each) | `src/content/works/` |
 | **Exhibitions, prizes, events** (one file each) | `src/content/exhibitions/` |
@@ -52,18 +52,6 @@ settings block at the top of a Markdown file (a missing `:` or quote). Fix it th
 In the `.astro` page files, edit only the plain text between the tags, for example the
 words inside `<p> … </p>`. Leave the lines between the `---` markers at the top alone
 unless you know what they do.
-
-### Placeholder and "To check" notes
-
-Yellow dashed boxes on the site mark things still to do:
-
-- **Placeholder**: content that's missing (portrait, artist statement, book cover, email…).
-- **To check**: details drafted from public websites that need confirming against Greg's
-  book or with Greg.
-
-In the page files they look like `<Note> … </Note>` or `<Note kind="check"> … </Note>`.
-Once the real content is in, delete the whole `<Note …> … </Note>` line(s).
-On artworks and exhibitions, set `needsChecking: false` once the details are confirmed.
 
 ---
 
@@ -84,6 +72,8 @@ On artworks and exhibitions, set `needsChecking: false` once the details are con
    dimensions: 56 x 76 cm
    image: ./windsor-shed.jpg
    imageAlt: A rusting corrugated-iron shed in late-afternoon light
+   credit: Purple Noon Gallery
+   creditUrl: https://purplenoongallery.com.au/artists/greg-hansell/
    featured: true
    order: 5
    ---
@@ -96,16 +86,20 @@ On artworks and exhibitions, set `needsChecking: false` once the details are con
 To add a photo to an existing work, upload the image to `src/content/works/`, then edit
 that work's `.md` file and add an `image: ./your-file.jpg` line.
 
-- `featured: true` shows the work on the home page (up to six).
+- `featured: true` shows the work on the home page (up to six, photos only).
+- `credit` / `creditUrl` add a "Photograph courtesy of…" line. Leave them out for your own photos.
+- Works without a photo are listed under "Also in the record" on the Works page.
+- Only `title` is required; leave out any line you don't know rather than guessing.
 - `order` sets its position on the Works page (lower numbers first).
 - To remove a work, open its `.md` file, click the **…** menu → **Delete file**.
 
 ## Adding an exhibition, prize or event
 
 Copy `src/content/exhibitions/_example.md` into a new file in the same folder, for example
-`royal-art-society-2025.md`, and fill it in. `kind` is one of `Exhibition`, `Prize`,
-`Event` or `Collection`. Items are listed newest first by `year` (or `date`, as
-`YYYY-MM-DD`); items with no year go at the end.
+`royal-art-society-2025.md`, and fill it in. `kind` is one of `Exhibition`, `Event`,
+`Prize` or `Award`; exhibitions and events are listed together, prizes and awards in a
+second list. Items are newest first by `year`, or by `date` (and optional `endDate`) as
+`YYYY-MM-DD`; items with no year go at the end.
 
 Files whose names start with `_` (like `_example.md`) are templates and never appear on
 the site.
@@ -131,8 +125,13 @@ npm run build     # production build into dist/
 npm run preview   # serve the built site
 ```
 
-- Astro 7, static output, no client-side JavaScript.
+- Astro 7, static output, no client-side JavaScript. Type is Newsreader (SIL OFL),
+  self-hosted via `@fontsource-variable/newsreader`.
+- `PRODUCT.md` records the site's audience and principles for design tools such as Impeccable.
 - Content collections are defined in `src/content.config.ts`.
 - `astro.config.mjs` sets `site` and `base` for GitHub Pages. For a custom domain, set
   `site` to that domain and remove `base`.
+- Artwork photos currently come from Purple Noon Gallery's listings and the book cover
+  from the QAGOMA Store, credited on each page. Replace them with Greg's own photographs
+  when available.
 - Deploys via `.github/workflows/deploy.yml` (`withastro/action` + `actions/deploy-pages`).
